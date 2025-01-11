@@ -49,29 +49,16 @@ def size_browser_window_indirect(request):
 
 # Для test_skip.py
 @pytest.fixture(params=[(2560, 1440), (1920, 1080), (640, 360)])
-def skip_if_mobile(request):
+def setup_browser(request):
     width = request.param[0]
     height = request.param[1]
     browser.config.window_width = width
     browser.config.window_height = height
     browser.config.base_url = 'https://github.com/'
+
     if width < 1011:
-        pytest.skip('Skipping test for mobile version')
+        yield 'mobile'
+    else:
+        yield 'desktop'
 
-    yield
-    browser.quit()
-
-
-# Для test_skip.py
-@pytest.fixture(params=[(2560, 1440), (1920, 1080), (640, 360)])
-def skip_if_desktop(request):
-    width = request.param[0]
-    height = request.param[1]
-    browser.config.window_width = width
-    browser.config.window_height = height
-    browser.config.base_url = 'https://github.com/'
-    if width >= 1011:
-        pytest.skip('Skipping test for mobile version')
-
-    yield
     browser.quit()
